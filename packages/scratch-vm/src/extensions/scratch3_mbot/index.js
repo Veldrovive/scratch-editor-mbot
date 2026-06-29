@@ -25,15 +25,26 @@ class Scratch3MBot {
 
     connectToServer() {
         this.mbot = new MBotAPI.MBot(mbotIP);
-        this.mbot.readHostname().then(hostname => console.log('hostname:', hostname));
-        this.mbot.readChannels().then(chs => console.log('chs:', chs));
+        this.mbot.readHostname()
+            .then(hostname => console.log('hostname:', hostname))
+            .catch(e => console.warn('Failed to read hostname:', e));
+        this.mbot.readChannels()
+            .then(chs => console.log('chs:', chs))
+            .catch(e => console.warn('Failed to read channels:', e));
         this.mbot.drive(0, 0, 0);
 
-        this.mbot.subscribe(MBotAPI.config.ODOMETRY.channel, odom => {
+        this.subscribeWithRetry(MBotAPI.config.ODOMETRY.channel, odom => {
             this.mbot_odom = odom;
         });
-        this.mbot.subscribe(MBotAPI.config.LIDAR.channel, scan => {
+        this.subscribeWithRetry(MBotAPI.config.LIDAR.channel, scan => {
             this.mbot_scan = scan;
+        });
+    }
+
+    subscribeWithRetry(channel, callback) {
+        this.mbot.subscribe(channel, callback).catch(e => {
+            console.warn(`[MBot] Failed to subscribe to ${channel}. Retrying in 2 seconds...`, e);
+            setTimeout(() => this.subscribeWithRetry(channel, callback), 2000);
         });
     }
 
