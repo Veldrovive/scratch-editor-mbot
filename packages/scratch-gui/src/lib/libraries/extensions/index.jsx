@@ -1,6 +1,9 @@
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
+import mbotIconURL from './mbot/mbot-header.png';
+import mbotInsetIconURL from './mbot/mbot.svg';
+
 import musicIconURL from './music/music.png';
 import musicInsetIconURL from './music/music-small.svg';
 
@@ -50,6 +53,26 @@ import faceSensingIconURL from './faceSensing/faceSensing.png';
 import faceSensingInsetIconURL from './faceSensing/faceSensing-small.svg';
 
 export default [
+    {
+        name: (
+            <FormattedMessage
+                defaultMessage="MBot"
+                description="Name for the 'MBot' extension"
+                id="gui.extension.mbot.name"
+            />
+        ),
+        extensionId: 'mbot',
+        iconURL: mbotIconURL,
+        insetIconURL: mbotInsetIconURL,
+        description: (
+            <FormattedMessage
+                defaultMessage="Control an MBot."
+                description="Description for the 'MBot' extension"
+                id="gui.extension.mbot.description"
+            />
+        ),
+        featured: true
+    },
     {
         name: (
             <FormattedMessage

@@ -160,6 +160,7 @@
     "lodash.defaultsdeep": "4.6.1",
     "lodash.omit": "4.18.0",
     "lodash.throttle": "4.1.1",
+    "mbot-js-api": "*",
     "omggif": "1.0.10",
     "papaparse": "5.5.4",
     "postcss-import": "12.0.1",

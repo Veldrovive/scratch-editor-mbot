@@ -1,0 +1,3 @@
+[submodule "packages/mbot_bridge"]
+	path = packages/mbot_bridge
+	url = https://github.com/mbot-project/mbot_bridge

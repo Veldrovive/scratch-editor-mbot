@@ -1,0 +1,16 @@
+[Unit]
+Description=Server for the MBot Scratch GUI
+After=network.target
+
+[Service]
+ExecStart=/bin/bash -c 'source /home/mbot/.nvm/nvm.sh && nvm use 22 && npx -y serve -s /data/www/scratch/ -l 8602'
+User=mbot
+Restart=always
+WorkingDirectory=/home/mbot/mbot_scratch_gui
+Environment=HOME=/home/mbot
+Environment=PATH=/home/mbot/.nvm/versions/node/v22.16.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
