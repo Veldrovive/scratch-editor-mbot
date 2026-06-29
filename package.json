@@ -52,5 +52,8 @@
     "npm": "10.9.8",
     "semantic-release": "25.0.5",
     "ts-node": "10.9.2"
+  },
+  "dependencies": {
+    "ws": "^8.21.0"
   }
 }
