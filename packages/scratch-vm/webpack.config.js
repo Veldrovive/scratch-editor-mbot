@@ -19,6 +19,11 @@ const nodeBuilder = new ScratchWebpackConfigBuilder(common)
             library: {
                 name: 'VirtualMachine'
             }
+        },
+        resolve: {
+            fallback: {
+                canvas: false
+            }
         }
     });
 
@@ -30,7 +35,8 @@ const webBuilder = new ScratchWebpackConfigBuilder(common)
         },
         resolve: {
             fallback: {
-                Buffer: require.resolve('buffer/')
+                Buffer: require.resolve('buffer/'),
+                canvas: false
             }
         },
         output: {

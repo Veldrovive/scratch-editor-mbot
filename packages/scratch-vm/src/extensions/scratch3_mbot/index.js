@@ -1,7 +1,7 @@
 const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const formatMessage = require('format-message');
-const { MBotAPI } = require('./dist/main.js');
+const { MBotAPI } = require('mbot-js-api');
 
 const menuIconURI = "";
 const blockIconURI = "";
