@@ -225,6 +225,11 @@ const buildConfig = baseConfig.clone()
                 from: 'extensions/**',
                 to: 'static',
                 context: 'src/examples'
+            },
+            {
+                from: '../../demos',
+                to: 'static/demos',
+                noErrorOnMissing: true
             }
         ]
     }));

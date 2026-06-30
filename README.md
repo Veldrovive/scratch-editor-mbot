@@ -57,6 +57,16 @@ We now include [mbot-bridge](https://github.com/mbot-project/mbot_bridge) as a s
 
 The "mbot" extension should automatically be loaded when scratch starts. This can cause issues in cases where the extension crashes on startup. If this is a problem at any point, remove `mbot` from the `CORE_EXTENSIONS` list in `packages/scratch-vm/src/virtual-machine.js`.
 
+### Demos and Examples
+I added `demos/duckling.sb3` as a demo script. It makes the MBot follow you at a certain distance. 
+You can now load demos directly from the Scratch editor by clicking the "Demos" menu in the top navigation bar.
+
+**How the Demos menu works:**
+1. Any `.sb3` file placed in the `demos/` directory at the root of the project will automatically be added to the menu.
+2. A script (`scripts/generate_demos_list.js`) runs automatically during the `prebuild` and `prestart` steps of the `scratch-gui` package. This script scans the `demos/` folder and generates a `demos.json` list.
+3. Webpack is configured (via `CopyWebpackPlugin` in `packages/scratch-gui/webpack.config.js`) to copy the entire `demos/` directory into `static/demos/` when building.
+4. The `DemosMenu` component reads the JSON list and fetches the corresponding `.sb3` file directly from the static web server when clicked. This ensures it works seamlessly with both `npm start` (webpack-dev-server) and the production build installed by `install_scripts/install.sh`.
+
 I created a `scripts/mbot_mock_server.js` script for local testing. This makes a websocket server that acts like the mbot-bridge but does not require any actual backing to it. Use it when you want to test on a computer that is not an MBot.
 
 I updated the mbot extension to have an emergency stop feature which immediately kills any velocity when the script ends execution or the red stop button is pressed. I implemented this after the MBot decided to try to bury itself in my laundry and I couldn't stop it.

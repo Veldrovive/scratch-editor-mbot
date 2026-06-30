@@ -10,6 +10,9 @@ const mbotIP = window.location.hostname;
 
 const FT_TO_M = 0.3048;
 const DEG_TO_RAD = Math.PI / 180;
+// TODO: make it so that if we are not connected we try to connect every once in a while
+// There seems to be an edge case where a reload hasn't happened that causes this class to 
+// have been constructed, but to have lost its subscriptions.
 
 class Scratch3MBot {
     mbot;
@@ -66,7 +69,7 @@ class Scratch3MBot {
             id: 'mbot',
             name: formatMessage({
                 id: 'mbot',
-                default: 'MBot extension',
+                default: 'MBot',
                 description: 'Name of the MBot extension.'
             }),
             blockIconURI,
