@@ -1,3 +1,92 @@
+# MBot Scratch Editor
+
+The MBot Scratch Editor is a fork of the [Scratch Editor Monorepo](https://github.com/scratchfoundation/scratch-editor), which contains the packages that make up the Scratch 3.0 interface and virtual machine. This fork contains a custom extension that enables Scratch blocks for controlling the University of Michigan MBot.
+
+## Setup process
+### Install nvm if not installed
+**THIS IS IMPORTANT**. Having node is not enough, the start script relies on having nvm specifically.
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash
+source ~/.bashrc
+nvm install node
+nvm use node
+```
+
+### Clone the library
+It does not actually matter where this is cloned to anymore. It is all one repo now so you can put it wherever you want. ~/Workspace is just a good default. Using `--recurse-submodules` downloads [mbot-bridge](https://github.com/mbot-project/mbot_bridge) which is a required dependency.
+```bash
+cd ~/Workspace
+git clone --recurse-submodules --depth 1 https://github.com/Veldrovive/scratch-editor-mbot.git
+```
+
+### Build the app
+This is just to make sure it builds correctly. Shouldn't actually be necessary if you just want to install.
+```bash
+cd scratch-editor-mbot
+npm install
+npm run --workspaces build
+```
+
+### Test
+At this point, if you want to test to make sure it is working, you can run this. This step is not required to install.
+```bash
+npm start
+```
+This will start a development server.
+
+If that works, then you can proceed to the final build and install.
+```bash
+# I assume we are still in .../scratch-editor-mbot
+./install_scripts/install.sh
+```
+This builds the scratch app into a static website and copies it to "/data/www/scratch" where we will serve it from. It also installs the `serve` node module globally so that we will be able to use it to actually serve the app whether or not we are connected to the internet.
+
+### Install
+Now we can install the service which will start the server every time the MBot starts.
+```bash
+# I assume we are still in .../scratch-editor-mbot
+./services/install_service.sh
+```
+Now every time the MBot boots, it will call the script `services/start_service.sh` (or a version of it copied to `/usr/local/bin/mbot-scratch-gui-start`) which checks all conditions and starts a webserver on port "8602". This port is hardcoded in `services/start_service.sh`. If you change it then you need to rerun `install_service.sh` in order to update it for the service.
+
+## Normal usage
+
+After doing the setup, the MBot should host a server at `http://[MBOT_IP]:8602` every time it starts up. Navigate to this to start.
+
+## Notes
+We now include [mbot-bridge](https://github.com/mbot-project/mbot_bridge) as a submodule so that we do not need to have the absolute path to the library in order to build. This means you can now have the scratch repo wherever you want.
+
+The "mbot" extension should automatically be loaded when scratch starts. This can cause issues in cases where the extension crashes on startup. If this is a problem at any point, remove `mbot` from the `CORE_EXTENSIONS` list in `packages/scratch-vm/src/virtual-machine.js`.
+
+I created a `scripts/mbot_mock_server.js` script for local testing. This makes a websocket server that acts like the mbot-bridge but does not require any actual backing to it. Use it when you want to test on a computer that is not an MBot.
+
+I updated the mbot extension to have an emergency stop feature which immediately kills any velocity when the script ends execution or the red stop button is pressed. I implemented this after the MBot decided to try to bury itself in my laundry and I couldn't stop it.
+
+I also removed hardcoded paths and node versions in the service so it should be more robust to different versions now.
+
+If we move to ROS instead of LCM in future versions of the omni iterations, then [mbot-bridge](https://github.com/mbot-project/mbot_bridge) must be updated to bridge to the new system.
+
+## Pulling from Upstream
+
+The original Scratch repositories receive about 100 commits per week because of dependency bot updates. This leads to Scratch creating several new releases *every week*. Every once in a while, we should sync our forks with the original repositories. To do this, use the following commands.
+
+```bash
+git remote add upstream https://github.com/scratchfoundation/scratch-editor.git
+git fetch upstream
+git rebase upstream/develop
+```
+At this point, there will likely be merge conflicts. They should mostly be in `package-lock.json`. Resolve these conflicts before continuing. Once the merge conflicts are resolved, finish the rebase.
+```bash
+git rebase --continue
+git config pull.rebase false
+git pull
+git push
+```
+
+---
+
+# Upstream README
+
 # scratch-editor: The Scratch Editor Monorepo
 
 If you'd like to use Scratch, please visit the [Scratch website](https://scratch.mit.edu/). You can build your own
