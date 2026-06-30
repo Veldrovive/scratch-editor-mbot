@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+# Change to the project root directory so this script can be run from anywhere
+cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
 # Load NVM and use Node 22 to match start_service.sh, so 'serve' is installed in the right environment
 if [ -s "$HOME/.nvm/nvm.sh" ]; then
   echo "Sourcing NVM and setting Node version to 22..."
