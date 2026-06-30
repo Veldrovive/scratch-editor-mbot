@@ -47,6 +47,11 @@ If that works, then you can proceed to the final build and install.
 ```
 This builds the scratch app into a static website and copies it to "/data/www/scratch" where we will serve it from. It also installs the `serve` node module globally so that we will be able to use it to actually serve the app whether or not we are connected to the internet.
 
+Since the devices are often SD card memory-constrained, you can optionally run a cleanup script to delete things like `node_modules` and cached build data to free up space after the installation has finished:
+```bash
+./install_scripts/cleanup.sh
+```
+
 Now we can install the service which will start the server every time the MBot starts.
 ```bash
 # I assume we are still in .../scratch-editor-mbot
