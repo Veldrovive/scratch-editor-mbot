@@ -8,8 +8,8 @@ The MBot Scratch Editor is a fork of the [Scratch Editor Monorepo](https://githu
 ```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.5/install.sh | bash
 source ~/.bashrc
-nvm install node
-nvm use node
+nvm install 22
+nvm use 22
 ```
 
 ### Clone the library
