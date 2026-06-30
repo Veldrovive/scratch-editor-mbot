@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e  # Quit on error
 
+# Copy the start script to a known system path and make it executable so the systemd unit isn't hardcoded to a specific user's clone directory.
+sudo cp start_service.sh /usr/local/bin/mbot-scratch-gui-start
+sudo chmod +x /usr/local/bin/mbot-scratch-gui-start
+
 if [ ! -f "/etc/systemd/system/mbot-scratch-gui.service" ]; then
   # This is the first time installing.
   sudo cp mbot-scratch-gui.service /etc/systemd/system/

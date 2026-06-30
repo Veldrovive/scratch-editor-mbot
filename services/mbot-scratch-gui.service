@@ -3,12 +3,14 @@ Description=Server for the MBot Scratch GUI
 After=network.target
 
 [Service]
-ExecStart=/bin/bash -c 'source /home/mbot/.nvm/nvm.sh && nvm use 22 && npx -y serve -s /data/www/scratch/ -l 8602'
+# Use a dedicated start script rather than a complex inline bash command. This keeps the systemd unit clean and allows us to do proper environment checks before starting.
+ExecStart=/usr/local/bin/mbot-scratch-gui-start
 User=mbot
 Restart=always
-WorkingDirectory=/home/mbot/mbot_scratch_gui
+# Set WorkingDirectory to the actual data directory rather than the hardcoded repo clone path.
+WorkingDirectory=/data/www/scratch
+# We removed the hardcoded PATH variable that pointed to a specific Node version. The start script will now dynamically source NVM.
 Environment=HOME=/home/mbot
-Environment=PATH=/home/mbot/.nvm/versions/node/v22.16.0/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 StandardOutput=journal
 StandardError=journal
 
