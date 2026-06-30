@@ -10,6 +10,7 @@ const mbotIP = window.location.hostname;
 
 const FT_TO_M = 0.3048;
 const DEG_TO_RAD = Math.PI / 180;
+const DRIVE_DEBOUNCE_MS = 100; // 50ms = 20Hz
 
 
 class Scratch3MBot {
@@ -18,6 +19,9 @@ class Scratch3MBot {
     mbot_scan;
     loopRunning = false;
     stopLoop = false;
+    driveDebounceTimeout = null;
+    lastDriveTime = 0;
+    pendingDriveCmd = null;
 
     constructor(runtime) {
         this.runtime = runtime;
@@ -37,7 +41,41 @@ class Scratch3MBot {
         if (this.loopRunning) {
             this.stopLoop = true;
         }
+        if (this.driveDebounceTimeout) {
+            clearTimeout(this.driveDebounceTimeout);
+            this.driveDebounceTimeout = null;
+        }
+        this.pendingDriveCmd = null;
         this.mbot.publish({ "utime": Date.now() * 1000, "pwm": [0, 0, 0] }, "MBOT_MOTOR_PWM_CMD", "mbot_motor_pwm_t");
+    }
+
+    _sendPendingDrive() {
+        if (this.pendingDriveCmd && this.mbot) {
+            console.log("[MBot] Sending api call to drive at", this.pendingDriveCmd);
+            this.mbot.drive(this.pendingDriveCmd.vx, this.pendingDriveCmd.vy, this.pendingDriveCmd.wz);
+            this.lastDriveTime = Date.now();
+            this.pendingDriveCmd = null;
+        }
+    }
+
+    drive(vx, vy, wz) {
+        const now = Date.now();
+
+        this.pendingDriveCmd = { vx, vy, wz };
+
+        // console.log("[MBot] Time since last drive request:", now - this.lastDriveTime);
+        if (now - this.lastDriveTime >= DRIVE_DEBOUNCE_MS) {
+            console.log("[MBot] Directly sending velocity command", this.pendingDriveCmd);
+            this._sendPendingDrive();
+        } else if (!this.driveDebounceTimeout) {
+            const delay = DRIVE_DEBOUNCE_MS - (now - this.lastDriveTime);
+            // console.log("[MBot] Scheduling debounced velocity command for delay: ", delay);
+            this.driveDebounceTimeout = setTimeout(() => {
+                console.log("[MBot] Sending debounced velocity command", this.pendingDriveCmd);
+                this.driveDebounceTimeout = null;
+                this._sendPendingDrive();
+            }, delay);
+        }
     }
 
     connectToServer() {
@@ -48,7 +86,7 @@ class Scratch3MBot {
         this.mbot.readChannels()
             .then(chs => console.log('chs:', chs))
             .catch(e => console.warn('Failed to read channels:', e));
-        this.mbot.drive(0, 0, 0);
+        this.drive(0, 0, 0);
 
         this.checkSubscriptions();
         if (this.connectionInterval) clearInterval(this.connectionInterval);
@@ -245,7 +283,7 @@ class Scratch3MBot {
             distance_prev = distance;
             const vx = Math.min(Kp * dx, 0.5);
             const vy = Math.min(Kp * dy, 0.5);
-            this.mbot.drive(vx, vy, 0);
+            this.drive(vx, vy, 0);
 
         }, 100);
     }
@@ -259,7 +297,7 @@ class Scratch3MBot {
             case 'left': vy = speed; break;
             case 'right': vy = -speed; break;
         }
-        this.mbot.drive(vx, vy, 0);
+        this.drive(vx, vy, 0);
     }
 
     angleToNearestObstacle() {
@@ -328,7 +366,7 @@ class Scratch3MBot {
         const vy = args.VY * 1.0;
         const wz = (args.WZ) * 1.0 * Math.PI / 180;
 
-        this.mbot.drive(vx, vy, wz);
+        this.drive(vx, vy, wz);
     }
 
     driveArc(args) {
@@ -336,7 +374,7 @@ class Scratch3MBot {
         let radius = args.RADIUS * 1.0;
         if (args.ARCDIRECTION === 'right') radius = -radius;
         const omega = vx / radius;
-        this.mbot.drive(vx, 0, omega);
+        this.drive(vx, 0, omega);
     }
 
     driveTheta(args) {
@@ -345,7 +383,7 @@ class Scratch3MBot {
         const vx = speed * Math.cos(thetaRad);
         const vy = speed * Math.sin(thetaRad);
 
-        this.mbot.drive(vx, vy, 0);
+        this.drive(vx, vy, 0);
     }
 
     driveDirectionForDist(args) {
@@ -372,7 +410,7 @@ class Scratch3MBot {
         if (this.loopRunning) {
             this.stopLoop = true;
         }
-        this.mbot.drive(0, 0, 0);
+        this.drive(0, 0, 0);
     }
 
     resetPosition() {
