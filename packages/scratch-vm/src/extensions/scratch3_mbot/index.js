@@ -21,9 +21,19 @@ class Scratch3MBot {
     constructor(runtime) {
         this.runtime = runtime;
         if (this.runtime) {
-            this.runtime.on('PROJECT_STOP_ALL', this.stop.bind(this));
+            console.log('[MBot] Runtime found. Connecting emergency stop event...');
+            this.runtime.on('PROJECT_STOP_ALL', this.emergencyStop.bind(this));
+            this.runtime.on('PROJECT_RUN_STOP', this.emergencyStop.bind(this))
+            console.log('[MBot] Emergency stop event connected.');
+        } else {
+            console.log('[MBot] Runtime not found.');
         }
         this.connectToServer();
+    }
+
+    emergencyStop() {
+        console.log('[MBot] Emergency stop');
+        this.stop();
     }
 
     connectToServer() {
@@ -85,7 +95,7 @@ class Scratch3MBot {
                     blockType: BlockType.COMMAND,
                     arguments: {
                         DIRECTION: { type: ArgumentType.STRING, menu: 'direction', defaultValue: 'front' },
-                        SPEED:     { type: ArgumentType.NUMBER, defaultValue: 0.0 }
+                        SPEED: { type: ArgumentType.NUMBER, defaultValue: 0.0 }
                     }
                 },
                 {
@@ -97,7 +107,7 @@ class Scratch3MBot {
                     }),
                     blockType: BlockType.BOOLEAN,
                     arguments: {
-                        DIST:  { type: ArgumentType.NUMBER, defaultValue: 0.5 },
+                        DIST: { type: ArgumentType.NUMBER, defaultValue: 0.5 },
                         ANGLE: { type: ArgumentType.NUMBER, defaultValue: 0 }
                     }
                 },
@@ -110,9 +120,9 @@ class Scratch3MBot {
                     }),
                     blockType: BlockType.COMMAND,
                     arguments: {
-                        VX:     { type: ArgumentType.NUMBER, defaultValue: 0.5 },
-                        VY:     { type: ArgumentType.NUMBER, defaultValue: 0.5 },
-                        WZ:  { type: ArgumentType.NUMBER, defaultValue: 0 },
+                        VX: { type: ArgumentType.NUMBER, defaultValue: 0.5 },
+                        VY: { type: ArgumentType.NUMBER, defaultValue: 0.5 },
+                        WZ: { type: ArgumentType.NUMBER, defaultValue: 0 },
                     }
                 },
                 {
@@ -125,8 +135,8 @@ class Scratch3MBot {
                     blockType: BlockType.COMMAND,
                     arguments: {
                         ARCDIRECTION: { type: ArgumentType.STRING, menu: 'arcdirection', defaultValue: 'left' },
-                        VX:           { type: ArgumentType.NUMBER, defaultValue: 0.5 },
-                        RADIUS:       { type: ArgumentType.NUMBER, defaultValue: 1.0 }
+                        VX: { type: ArgumentType.NUMBER, defaultValue: 0.5 },
+                        RADIUS: { type: ArgumentType.NUMBER, defaultValue: 1.0 }
                     }
                 },
                 {
@@ -152,12 +162,12 @@ class Scratch3MBot {
                     blockType: BlockType.COMMAND,
                     arguments: {
                         DIRECTION: { type: ArgumentType.STRING, menu: 'direction', defaultValue: 'front' },
-                        DIST:      { type: ArgumentType.NUMBER, defaultValue: 1.0 }
+                        DIST: { type: ArgumentType.NUMBER, defaultValue: 1.0 }
                     }
                 },
-                { opcode: 'stop', text: formatMessage({id:'mbot.stopBlock', default:'stop MBot'}), blockType:BlockType.COMMAND },
-                { opcode: 'angleToNearestObstacle',   text: formatMessage({id:'mbot.angleToNearestObstacle', default:'Angle to nearest obstacle'}),   blockType:BlockType.REPORTER },
-                { opcode: 'distanceToNearestObstacle',text: formatMessage({id:'mbot.distanceToNearestObstacle', default:'Distance to nearest obstacle'}),blockType:BlockType.REPORTER },
+                { opcode: 'stop', text: formatMessage({ id: 'mbot.stopBlock', default: 'stop MBot' }), blockType: BlockType.COMMAND },
+                { opcode: 'angleToNearestObstacle', text: formatMessage({ id: 'mbot.angleToNearestObstacle', default: 'Angle to nearest obstacle' }), blockType: BlockType.REPORTER },
+                { opcode: 'distanceToNearestObstacle', text: formatMessage({ id: 'mbot.distanceToNearestObstacle', default: 'Distance to nearest obstacle' }), blockType: BlockType.REPORTER },
                 {
                     opcode: 'detectObstacleInDirection',
                     text: formatMessage({
@@ -167,29 +177,29 @@ class Scratch3MBot {
                     blockType: BlockType.BOOLEAN,
                     arguments: {
                         DIRECTION: { type: ArgumentType.STRING, menu: 'direction', defaultValue: 'front' },
-                        DIST:      { type: ArgumentType.NUMBER, defaultValue: 0.5 }
+                        DIST: { type: ArgumentType.NUMBER, defaultValue: 0.5 }
                     }
                 },
-                { opcode: 'resetPosition',   text: formatMessage({id:'mbot.resetPositionBlock', default:'Reset position'}),   blockType:BlockType.COMMAND },
-                { opcode: 'getXPosition',    text: formatMessage({id:'mbot.getXPositionBlock', default:'X Position'}),    blockType:BlockType.REPORTER },
-                { opcode: 'getYPosition',    text: formatMessage({id:'mbot.getYPositionBlock', default:'Y Position'}),    blockType:BlockType.REPORTER },
-                { opcode: 'getHeading',      text: formatMessage({id:'mbot.getHeadingBlock', default:'Heading'}),      blockType:BlockType.REPORTER }
+                { opcode: 'resetPosition', text: formatMessage({ id: 'mbot.resetPositionBlock', default: 'Reset position' }), blockType: BlockType.COMMAND },
+                { opcode: 'getXPosition', text: formatMessage({ id: 'mbot.getXPositionBlock', default: 'X Position' }), blockType: BlockType.REPORTER },
+                { opcode: 'getYPosition', text: formatMessage({ id: 'mbot.getYPositionBlock', default: 'Y Position' }), blockType: BlockType.REPORTER },
+                { opcode: 'getHeading', text: formatMessage({ id: 'mbot.getHeadingBlock', default: 'Heading' }), blockType: BlockType.REPORTER }
             ],
             menus: {
                 direction: {
                     acceptReporters: true,
                     items: [
-                        { text: formatMessage({id:'mbot.dirFront', default:'front'}), value:'front' },
-                        { text: formatMessage({id:'mbot.dirBack', default:'back'}),   value:'back'  },
-                        { text: formatMessage({id:'mbot.dirLeft', default:'left'}),   value:'left'  },
-                        { text: formatMessage({id:'mbot.dirRight',default:'right'}),  value:'right' }
+                        { text: formatMessage({ id: 'mbot.dirFront', default: 'front' }), value: 'front' },
+                        { text: formatMessage({ id: 'mbot.dirBack', default: 'back' }), value: 'back' },
+                        { text: formatMessage({ id: 'mbot.dirLeft', default: 'left' }), value: 'left' },
+                        { text: formatMessage({ id: 'mbot.dirRight', default: 'right' }), value: 'right' }
                     ]
                 },
                 arcdirection: {
                     acceptReporters: true,
                     items: [
-                        { text: formatMessage({id:'mbot.dirLeft', default:'left'}),  value:'left'  },
-                        { text: formatMessage({id:'mbot.dirRight',default:'right'}), value:'right' }
+                        { text: formatMessage({ id: 'mbot.dirLeft', default: 'left' }), value: 'left' },
+                        { text: formatMessage({ id: 'mbot.dirRight', default: 'right' }), value: 'right' }
                     ]
                 }
             }
@@ -214,7 +224,7 @@ class Scratch3MBot {
             const dx = goalX - this.mbot_odom.data.x;
             const dy = goalY - this.mbot_odom.data.y;
             const distance = Math.hypot(dx, dy);
-            
+
             if (Math.abs(distance - distance_prev) < 0.001) {
                 this.loopRunning = false;
                 this.stopLoop = false;
@@ -226,7 +236,7 @@ class Scratch3MBot {
             const vx = Math.min(Kp * dx, 0.5);
             const vy = Math.min(Kp * dy, 0.5);
             this.mbot.drive(vx, vy, 0);
-            
+
         }, 100);
     }
 
@@ -235,14 +245,14 @@ class Scratch3MBot {
         let vx = 0, vy = 0;
         switch (args.DIRECTION) {
             case 'front': vx = speed; break;
-            case 'back':  vx = -speed; break;
-            case 'left':  vy = speed; break;
+            case 'back': vx = -speed; break;
+            case 'left': vy = speed; break;
             case 'right': vy = -speed; break;
         }
         this.mbot.drive(vx, vy, 0);
     }
 
-    angleToNearestObstacle () {
+    angleToNearestObstacle() {
         if (this.mbot_scan == null) {
             return 0;
         }
@@ -260,7 +270,7 @@ class Scratch3MBot {
         return min_theta * 180 / Math.PI
     }
 
-    distanceToNearestObstacle () {
+    distanceToNearestObstacle() {
         if (this.mbot_scan == null) {
             return 0;
         }
@@ -288,9 +298,9 @@ class Scratch3MBot {
         return false;
     }
 
-    detectObstacleInDirection(args){
+    detectObstacleInDirection(args) {
         let angleDeg;
-        switch (args.DIRECTION){
+        switch (args.DIRECTION) {
             case 'front': angleDeg = 0; break;
             case 'left': angleDeg = 90; break;
             case 'back': angleDeg = 180; break;
@@ -305,10 +315,10 @@ class Scratch3MBot {
 
     driveVel(args) {
         const vx = args.VX * 1.0;
-        const vy = args.VY * 1.0 ;
+        const vy = args.VY * 1.0;
         const wz = (args.WZ) * 1.0 * Math.PI / 180;
 
-        this.mbot.drive(vx,vy,wz);
+        this.mbot.drive(vx, vy, wz);
     }
 
     driveArc(args) {
@@ -321,7 +331,7 @@ class Scratch3MBot {
 
     driveTheta(args) {
         const thetaRad = (args.THETA) * 1.0 * Math.PI / 180;
-        const speed   = args.SPEED * 1.0;
+        const speed = args.SPEED * 1.0;
         const vx = speed * Math.cos(thetaRad);
         const vy = speed * Math.sin(thetaRad);
 
@@ -332,22 +342,22 @@ class Scratch3MBot {
         const distance = args.DIST * 1.0;
         switch (args.DIRECTION) {
             case "front":
-                this.driveTo({"X": distance, "Y": 0});
+                this.driveTo({ "X": distance, "Y": 0 });
                 break;
             case "left":
-                this.driveTo({"X": 0, "Y": distance});
+                this.driveTo({ "X": 0, "Y": distance });
                 break;
             case "right":
-                this.driveTo({"X": 0, "Y": -distance});
+                this.driveTo({ "X": 0, "Y": -distance });
                 break;
             case "back":
-                this.driveTo({"X": -distance, "Y": 0});
+                this.driveTo({ "X": -distance, "Y": 0 });
                 break;
             default:
                 return;
         }
     }
-        
+
     stop() {
         if (this.loopRunning) {
             this.stopLoop = true;
@@ -376,6 +386,6 @@ class Scratch3MBot {
         return this.mbot_odom.data.theta * 180 / Math.PI;
     }
 }
-    
+
 
 module.exports = Scratch3MBot;
