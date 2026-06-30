@@ -13,9 +13,9 @@ nvm use 22
 ```
 
 ### Clone the library
-It does not actually matter where this is cloned to anymore. It is all one repo now so you can put it wherever you want. ~/Workspace is just a good default. Using `--recurse-submodules` downloads [mbot-bridge](https://github.com/mbot-project/mbot_bridge) which is a required dependency.
+It does not actually matter where this is cloned to anymore. It is all one repo now so you can put it wherever you want. ~/Workplace is just a good default. Using `--recurse-submodules` downloads [mbot-bridge](https://github.com/mbot-project/mbot_bridge) which is a required dependency.
 ```bash
-cd ~/Workspace
+cd ~/Workplace
 git clone --recurse-submodules --depth 1 https://github.com/Veldrovive/scratch-editor-mbot.git
 ```
 
