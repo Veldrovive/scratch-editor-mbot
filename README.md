@@ -21,6 +21,9 @@ git clone --recurse-submodules --depth 1 https://github.com/Veldrovive/scratch-e
 
 ### Test build & run
 This is just to make sure it builds correctly. Shouldn't actually be necessary if you just want to install.
+
+**Note:** You might see `Module not found: Error: Can't resolve 'canvas'` during the build step. This is normal and fine.
+
 ```bash
 cd scratch-editor-mbot
 npm install
@@ -35,6 +38,9 @@ This will start a development server.
 
 ### Install
 If that works, then you can proceed to the final build and install.
+
+**Note:** You might see `Module not found: Error: Can't resolve 'canvas'` during the install step. This is normal and fine.
+
 ```bash
 # I assume we are still in .../scratch-editor-mbot
 ./install_scripts/install.sh
