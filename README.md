@@ -19,7 +19,7 @@ cd ~/Workspace
 git clone --recurse-submodules --depth 1 https://github.com/Veldrovive/scratch-editor-mbot.git
 ```
 
-### Build the app
+### Test build & run
 This is just to make sure it builds correctly. Shouldn't actually be necessary if you just want to install.
 ```bash
 cd scratch-editor-mbot
@@ -27,13 +27,13 @@ npm install
 npm run --workspaces build
 ```
 
-### Test
 At this point, if you want to test to make sure it is working, you can run this. This step is not required to install.
 ```bash
 npm start
 ```
 This will start a development server.
 
+### Install
 If that works, then you can proceed to the final build and install.
 ```bash
 # I assume we are still in .../scratch-editor-mbot
@@ -41,7 +41,6 @@ If that works, then you can proceed to the final build and install.
 ```
 This builds the scratch app into a static website and copies it to "/data/www/scratch" where we will serve it from. It also installs the `serve` node module globally so that we will be able to use it to actually serve the app whether or not we are connected to the internet.
 
-### Install
 Now we can install the service which will start the server every time the MBot starts.
 ```bash
 # I assume we are still in .../scratch-editor-mbot
