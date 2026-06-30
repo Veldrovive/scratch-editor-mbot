@@ -10,9 +10,7 @@ const mbotIP = window.location.hostname;
 
 const FT_TO_M = 0.3048;
 const DEG_TO_RAD = Math.PI / 180;
-// TODO: make it so that if we are not connected we try to connect every once in a while
-// There seems to be an edge case where a reload hasn't happened that causes this class to 
-// have been constructed, but to have lost its subscriptions.
+
 
 class Scratch3MBot {
     mbot;
@@ -49,19 +47,25 @@ class Scratch3MBot {
             .catch(e => console.warn('Failed to read channels:', e));
         this.mbot.drive(0, 0, 0);
 
-        this.subscribeWithRetry(MBotAPI.config.ODOMETRY.channel, odom => {
-            this.mbot_odom = odom;
-        });
-        this.subscribeWithRetry(MBotAPI.config.LIDAR.channel, scan => {
-            this.mbot_scan = scan;
-        });
+        this.checkSubscriptions();
+        if (this.connectionInterval) clearInterval(this.connectionInterval);
+        this.connectionInterval = setInterval(() => this.checkSubscriptions(), 2000);
     }
 
-    subscribeWithRetry(channel, callback) {
-        this.mbot.subscribe(channel, callback).catch(e => {
-            console.warn(`[MBot] Failed to subscribe to ${channel}. Retrying in 2 seconds...`, e);
-            setTimeout(() => this.subscribeWithRetry(channel, callback), 2000);
-        });
+    checkSubscriptions() {
+        if (!this.mbot) return;
+
+        if (!this.mbot.ws_subs[MBotAPI.config.ODOMETRY.channel]) {
+            this.mbot.subscribe(MBotAPI.config.ODOMETRY.channel, odom => {
+                this.mbot_odom = odom;
+            }).catch(e => console.warn(`[MBot] Failed to subscribe to ${MBotAPI.config.ODOMETRY.channel}. Retrying later...`));
+        }
+
+        if (!this.mbot.ws_subs[MBotAPI.config.LIDAR.channel]) {
+            this.mbot.subscribe(MBotAPI.config.LIDAR.channel, scan => {
+                this.mbot_scan = scan;
+            }).catch(e => console.warn(`[MBot] Failed to subscribe to ${MBotAPI.config.LIDAR.channel}. Retrying later...`));
+        }
     }
 
     getInfo() {
