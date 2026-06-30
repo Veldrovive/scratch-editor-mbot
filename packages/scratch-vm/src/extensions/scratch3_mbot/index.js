@@ -34,7 +34,10 @@ class Scratch3MBot {
 
     emergencyStop() {
         console.log('[MBot] Emergency stop');
-        this.stop();
+        if (this.loopRunning) {
+            this.stopLoop = true;
+        }
+        this.mbot.publish({ "utime": Date.now() * 1000, "pwm": [0, 0, 0] }, "MBOT_MOTOR_PWM_CMD", "mbot_motor_pwm_t");
     }
 
     connectToServer() {
