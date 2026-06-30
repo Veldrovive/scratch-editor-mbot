@@ -51,7 +51,7 @@ class Scratch3MBot {
 
     _sendPendingDrive() {
         if (this.pendingDriveCmd && this.mbot) {
-            console.log("[MBot] Sending api call to drive at", this.pendingDriveCmd);
+            // console.log("[MBot] Sending api call to drive at", this.pendingDriveCmd);
             this.mbot.drive(this.pendingDriveCmd.vx, this.pendingDriveCmd.vy, this.pendingDriveCmd.wz);
             this.lastDriveTime = Date.now();
             this.pendingDriveCmd = null;
@@ -65,13 +65,13 @@ class Scratch3MBot {
 
         // console.log("[MBot] Time since last drive request:", now - this.lastDriveTime);
         if (now - this.lastDriveTime >= DRIVE_DEBOUNCE_MS) {
-            console.log("[MBot] Directly sending velocity command", this.pendingDriveCmd);
+            // console.log("[MBot] Directly sending velocity command", this.pendingDriveCmd);
             this._sendPendingDrive();
         } else if (!this.driveDebounceTimeout) {
             const delay = DRIVE_DEBOUNCE_MS - (now - this.lastDriveTime);
             // console.log("[MBot] Scheduling debounced velocity command for delay: ", delay);
             this.driveDebounceTimeout = setTimeout(() => {
-                console.log("[MBot] Sending debounced velocity command", this.pendingDriveCmd);
+                // console.log("[MBot] Sending debounced velocity command", this.pendingDriveCmd);
                 this.driveDebounceTimeout = null;
                 this._sendPendingDrive();
             }, delay);
