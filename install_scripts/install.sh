@@ -1,7 +1,17 @@
 #!/bin/bash
 set -e
 
-# [Justification: Install 'serve' globally during the build step. This ensures 'serve' is available offline when the robot boots up, avoiding network requests via 'npx -y' inside the service.]
+# Load NVM and use Node 22 to match start_service.sh, so 'serve' is installed in the right environment
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+  echo "Sourcing NVM and setting Node version to 22..."
+  source "$HOME/.nvm/nvm.sh"
+  nvm install 22
+  nvm use 22
+else
+  echo "WARNING: NVM is not installed. Using system Node."
+fi
+
+# Install 'serve' globally during the build step. This ensures 'serve' is available offline when the robot boots up, avoiding network requests via 'npx -y' inside the service.
 echo "Installing 'serve' globally for offline use..."
 npm install -g serve
 
@@ -17,5 +27,5 @@ else
 fi
 sudo cp -r packages/scratch-gui/build/* /data/www/scratch
 
-# [Justification: Ensure the mbot user owns the web files. By default, sudo commands make files owned by root. The systemd service runs as 'mbot', so 'mbot' should own these files to prevent permission issues.]
+# Ensure the mbot user owns the web files. By default, sudo commands make files owned by root. The systemd service runs as 'mbot', so 'mbot' should own these files to prevent permission issues.
 sudo chown -R mbot:mbot /data/www/scratch
