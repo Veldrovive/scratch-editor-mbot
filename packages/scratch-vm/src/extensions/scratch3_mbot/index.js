@@ -10,7 +10,7 @@ const mbotIP = window.location.hostname;
 
 const FT_TO_M = 0.3048;
 const DEG_TO_RAD = Math.PI / 180;
-const DRIVE_DEBOUNCE_MS = 100; // 50ms = 20Hz
+const DRIVE_DEBOUNCE_MS = 50; // 50ms = 20Hz
 
 
 class Scratch3MBot {
