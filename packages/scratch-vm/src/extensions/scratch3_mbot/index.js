@@ -20,6 +20,9 @@ class Scratch3MBot {
 
     constructor(runtime) {
         this.runtime = runtime;
+        if (this.runtime) {
+            this.runtime.on('PROJECT_STOP_ALL', this.stop.bind(this));
+        }
         this.connectToServer();
     }
 
