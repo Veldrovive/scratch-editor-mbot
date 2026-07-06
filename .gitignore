@@ -1,3 +1,5 @@
+tasks/
+
 # add-repo.sh
 /add-repo.tmp
 /add-repo.errors.log

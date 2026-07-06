@@ -1,3 +1,7 @@
 [submodule "packages/mbot_bridge"]
 	path = packages/mbot_bridge
 	url = https://github.com/mbot-project/mbot_bridge
+[submodule "packages/mbot_bridge_ros"]
+	path = packages/mbot_bridge_ros
+	url = https://github.com/Veldrovive/mbot_bridge_ros.git
+	branch = main

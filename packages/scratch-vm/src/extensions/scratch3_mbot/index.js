@@ -1,7 +1,7 @@
 const ArgumentType = require('../../extension-support/argument-type');
 const BlockType = require('../../extension-support/block-type');
 const formatMessage = require('format-message');
-const MBotAPI = require('mbot-js-api');
+const MBotWrapper = require('./mbot_wrapper');
 
 const menuIconURI = "";
 const blockIconURI = "";
@@ -46,7 +46,7 @@ class Scratch3MBot {
             this.driveDebounceTimeout = null;
         }
         this.pendingDriveCmd = null;
-        this.mbot.publish({ "utime": Date.now() * 1000, "pwm": [0, 0, 0] }, "MBOT_MOTOR_PWM_CMD", "mbot_motor_pwm_t");
+        if (this.mbot) this.mbot.emergencyStop();
     }
 
     _sendPendingDrive() {
@@ -79,7 +79,7 @@ class Scratch3MBot {
     }
 
     connectToServer() {
-        this.mbot = new MBotAPI.MBot(mbotIP);
+        this.mbot = new MBotWrapper(mbotIP);
         this.mbot.readHostname()
             .then(hostname => console.log('hostname:', hostname))
             .catch(e => console.warn('Failed to read hostname:', e));
@@ -88,25 +88,13 @@ class Scratch3MBot {
             .catch(e => console.warn('Failed to read channels:', e));
         this.drive(0, 0, 0);
 
-        this.checkSubscriptions();
-        if (this.connectionInterval) clearInterval(this.connectionInterval);
-        this.connectionInterval = setInterval(() => this.checkSubscriptions(), 2000);
-    }
+        this.mbot.onOdom(odom => {
+            this.mbot_odom = odom;
+        });
 
-    checkSubscriptions() {
-        if (!this.mbot) return;
-
-        if (!this.mbot.ws_subs[MBotAPI.config.ODOMETRY.channel]) {
-            this.mbot.subscribe(MBotAPI.config.ODOMETRY.channel, odom => {
-                this.mbot_odom = odom;
-            }).catch(e => console.warn(`[MBot] Failed to subscribe to ${MBotAPI.config.ODOMETRY.channel}. Retrying later...`));
-        }
-
-        if (!this.mbot.ws_subs[MBotAPI.config.LIDAR.channel]) {
-            this.mbot.subscribe(MBotAPI.config.LIDAR.channel, scan => {
-                this.mbot_scan = scan;
-            }).catch(e => console.warn(`[MBot] Failed to subscribe to ${MBotAPI.config.LIDAR.channel}. Retrying later...`));
-        }
+        this.mbot.onScan(scan => {
+            this.mbot_scan = scan;
+        });
     }
 
     getInfo() {

@@ -23,7 +23,8 @@
     "packages/scratch-vm",
     "packages/scratch-gui",
     "packages/scratch-media-lib-scripts",
-    "packages/mbot_bridge/mbot_js"
+    "packages/mbot_bridge/mbot_js",
+    "packages/mbot_bridge_ros/mbot_js"
   ],
   "scripts": {
     "build": "cross-env NODE_ENV=production npm run --workspaces build",
